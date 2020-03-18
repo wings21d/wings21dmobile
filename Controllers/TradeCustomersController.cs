@@ -16,24 +16,45 @@ namespace Wings21D.Controllers
 
         // GET api/values
         //public IEnumerable<string> Get()
-        public HttpResponseMessage Get(string dbName)
-        {
-            SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + dbName + @";Data Source=localhost\SQLEXPRESS");
-            DataSet ds = new DataSet();
-            List<string> mn = new List<string>();
-            SqlDataAdapter da = new SqlDataAdapter();
-            DataTable Customers = new DataTable();
-
+        public HttpResponseMessage Get(string dbName, string beatName)
+        {   
             if (!String.IsNullOrEmpty(dbName))
             {
+                SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + dbName + @";Data Source=localhost\SQLEXPRESS");
+                DataSet ds = new DataSet();
+                List<string> mn = new List<string>();
+                SqlDataAdapter da = new SqlDataAdapter();
+                DataTable Customers = new DataTable();
+                SqlCommand cmd = new SqlCommand();
+
                 try
                 {
+                    cmd.Connection = con;
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("select * from Trade_Customers_Table Order By BeatName", con);
+
+                    if (!String.IsNullOrEmpty(beatName))
+                    {
+                        cmd.CommandText = "Select a.CustomerName, a.BeatName, a.ProfitCenterName, ISNULL(a.CustomerCity,'Not Set') CustomerCity, " +
+                                          "ISNULL(a.GSTNumber,'Not Set') GSTNumber, ISNULL(Sum(b.PendingValue),0) TotalDue " +
+                                          "From Trade_Customers_Table a LEFT Join Trade_CustomerPendingBills_Table b " +
+                                          "On a.CustomerName = b.CustomerName Where a.BeatName='" + beatName.Trim() + "'" +
+                                          "Group by a. CustomerName, b.CustomerName, a.BeatName, a.ProfitCenterName, a.GSTNumber, a.CustomerCity " +
+                                          "Order by a.CustomerName, a.BeatName";
+                    }
+                    else
+                    {
+                        cmd.CommandText = "Select a.CustomerName, a.BeatName, a.ProfitCenterName, ISNULL(a.CustomerCity,'Not Set') CustomerCity, " +
+                                          "ISNULL(a.GSTNumber,'Not Set') GSTNumber, ISNULL(Sum(b.PendingValue),0) TotalDue " +
+                                          "From Trade_Customers_Table a LEFT Join Trade_CustomerPendingBills_Table b " +
+                                          "On a.CustomerName = b.CustomerName "  +
+                                          "Group by a. CustomerName, b.CustomerName, a.BeatName, a.ProfitCenterName, a.GSTNumber, a.CustomerCity " +
+                                          "Order by a.CustomerName, a.BeatName";
+                    }
                     da.SelectCommand = cmd;
                     Customers.TableName = "Customers";
                     da.Fill(Customers);
                     con.Close();
+
                 }
                 catch (Exception ex)
                 {

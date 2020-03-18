@@ -74,11 +74,27 @@ namespace Wings21D.Controllers
 
             if (!String.IsNullOrEmpty(dbName))
             {
+                con.Open();
+                cmd.CommandText = "Select * From Trade_CustomerPendingBills_Table";
+                SqlDataAdapter customerBalancesAdapter = new SqlDataAdapter();
+                DataTable availableCustoemrBalances = new DataTable();
+                customerBalancesAdapter.SelectCommand = cmd;
+                customerBalancesAdapter.Fill(availableCustoemrBalances);
+
+                con.Close();
+
                 try
                 {
                     con.Open();
-                    foreach (TradeCustomerBalance tcb in customerBalance)
+
+                    if(availableCustoemrBalances.Rows.Count > 0)
                     {
+                        cmd.CommandText = "Delete * from Trade_CustomerPendingBills_Table";
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    foreach (TradeCustomerBalance tcb in customerBalance)
+                    {   
                         cmd.CommandText = "Insert Into Trade_CustomerPendingBills_Table Values('" + tcb.customerName + "', '"
                                           + tcb.billNumber + "', '" + tcb.billDate + "', " + tcb.pendingValue + ")";
                         cmd.ExecuteNonQuery();

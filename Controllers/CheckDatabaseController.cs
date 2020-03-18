@@ -11,24 +11,44 @@ using System.Linq;
 
 namespace Wings21D.Controllers
 {
-    public class UsersController : ApiController
+    public class CheckDatabaseController : ApiController
     {
         // GET api/values/5
-        public bool Get(string cName, string uName, string uPwd)
+        public bool Get(string dbName)
         {
-            SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + cName + @";Data Source=localhost\SQLEXPRESS");
-            DataSet ds = new DataSet();
-
-            string qStr = "Select Count(*) from CompanyUsers_Table Where Username='" + uName + "' And UserPassword='" + uPwd + "' And ActiveStatus=1";
-            SqlCommand cmd = new SqlCommand(qStr, con);
-
-            SqlDataAdapter da = new SqlDataAdapter();
-            da.SelectCommand = cmd;
-            da.Fill(ds);
-
-            if (Convert.ToInt32(ds.Tables[0].Rows[0][0].ToString()) > 0)
+            if (!String.IsNullOrEmpty(dbName))
             {
-                return true;
+                SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Data Source=localhost\SQLEXPRESS");
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = con;
+                DataSet ds = new DataSet();
+                string qStr = "Select Count(*) from sys.databases Where name='" + dbName + "'";
+
+                try
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter();
+                    cmd.CommandText = qStr;
+                    da.SelectCommand = cmd;
+                    cmd.ExecuteNonQuery();
+                    da.Fill(ds);
+
+                    if (Convert.ToInt32(ds.Tables[0].Rows[0][0].ToString()) > 0)
+                    {
+                        con.Close();
+                        return true;                        
+                    }
+                    else
+                    {
+                        con.Close();
+                        return false;
+                    }
+                }
+                catch
+                {
+                    con.Close();
+                    return false;
+                }
             }
             else
             {

@@ -5,13 +5,15 @@ using System.Web;
 
 namespace Wings21D.Models
 {
-    public class CashCollectionsEntry
+    public class SalesOrderEntry
     {
         public string transactionDate { get; set; }
         public string customerName { get; set; }
-        public double collectionAmount { get; set; }
-        public string againstInvoiceNumber { get; set; }
+        public string itemName { get; set; }
+        public int quantityInPieces { get; set; }
+        public int quantityInPacks { get; set; }
         public string transactionRemarks { get; set; }
         public string userName { get; set; }
+        public string profitCenterName { get; set; }
     }
 }

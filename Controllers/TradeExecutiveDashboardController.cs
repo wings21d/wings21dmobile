@@ -29,18 +29,18 @@ namespace Wings21D.Controllers
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "Select UserId from CompanyUsers_Table Where UserName='" + userName + "'";
+                    cmd.CommandText = "Select UserName from CompanyUsers_Table Where UserName='" + userName + "'";
                     cmd.Connection = con;
                     da.SelectCommand = cmd;
                     da.Fill(UserIDTable);
 
                     cmd.CommandText = "SELECT " +
-                                      "(SELECT count(*) From Collections_Table where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS CollectionCount, " +
-                                      "(SELECT sum(amount) From Collections_Table Where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS CollectionAmount, " +
-                                      "(SELECT count(*) From CashCollections_Table Where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS CashTransactions, " +
-                                      "(SELECT sum(amount) From CashCollections_Table Where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS CashAmount, " +
-                                      "(SELECT count(*) From ChequeCollections_Table Where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS ChequeTransactions, " +
-                                      "(SELECT sum(amount) From ChequeCollections_Table Where UserId='" + UserIDTable.Rows[0][0].ToString() + "') AS ChequeAmount";
+                                      "(SELECT count(*) From Collections_Table where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS CollectionCount, " +
+                                      "(SELECT sum(cashamount)+sum(chequeamount) From Collections_Table Where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS CollectionAmount, " +
+                                      "(SELECT count(*) From CashCollections_Table Where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS CashTransactions, " +
+                                      "(SELECT sum(amount) From CashCollections_Table Where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS CashAmount, " +
+                                      "(SELECT count(*) From ChequeCollections_Table Where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS ChequeTransactions, " +
+                                      "(SELECT sum(amount) From ChequeCollections_Table Where Username='" + UserIDTable.Rows[0][0].ToString() + "') AS ChequeAmount";
 
                     da.SelectCommand = cmd;
                     Dashboard.TableName = "Dashboard";

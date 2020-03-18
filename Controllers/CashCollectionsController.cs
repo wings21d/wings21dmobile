@@ -15,7 +15,7 @@ namespace Wings21D.Controllers
     {
 
         // GET api/<controller>
-        public HttpResponseMessage Get(string dbName, string todayDate)
+        public HttpResponseMessage Get(string dbName, string asAtDate)
         {
             SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + dbName + @";Data Source=localhost\SQLEXPRESS");
             DataSet ds = new DataSet();
@@ -30,8 +30,14 @@ namespace Wings21D.Controllers
                     con.Open();
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = con;
-                    cmd.CommandText = "select * from CashCollections_Table Where TransactionDate = '" + todayDate +
-                                      "' Order By TransactionNo";
+                    DateTime asonDate = DateTime.Parse(asAtDate);
+                    
+                    cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, b.BeatName, " +
+                                      "a.Amount, RTRIM(ISNULL(a.AgainstInvoiceNumber,'')) As AgainstInvoiceNumber, " +
+                                      "a.TransactionRemarks, a.Username From CashCollections_Table a, Trade_Customers_Table b Where " +
+                                      "a.CustomerName=b.CustomerName and a.TransactionDate <= '" + asonDate.ToString() +
+                                      "' And a.DownloadedFlag=0 Order By a.DocumentNo";
+
                     da.SelectCommand = cmd;
                     CashCollections.TableName = "CashCollections";
                     da.Fill(CashCollections);
@@ -87,15 +93,25 @@ namespace Wings21D.Controllers
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = con;
 
+            DateTime todayDate = DateTime.Now;
+            var dateOnly = todayDate.Date;
+
             if (!String.IsNullOrEmpty(dbName))
             {
                 try
                 {
                     con.Open();
 
-                    cmd.CommandText = "Insert Into Collections_Table Values(null,null,null,'" + myCE.customerName +
-                                       "', " + Convert.ToDouble(myCE.collectionAmount) + ", '" + myCE.transactionRemarks +
-                                       "', '" + myCE.userName + "','M-CC',0,null)";
+                    cmd.CommandText = "Insert Into CashCollections_Table Values(" +
+                                      //"(Select ISNULL(Max(TransactionNo),0)+1 From CashCollections_Table Where Year(convert(varchar,TransactionDate,23))='" + String.Format("{0:yyyy}",todayDate.Date) + "')," +
+                                      "(Select ISNULL(Max(TransactionNo),0)+1 From CashCollections_Table), " +
+                                      "'" + String.Format("{0:yyyy-MM-dd}", todayDate.Date) + "',  null, '" + myCE.customerName + "', "
+                                      + Convert.ToDouble(myCE.collectionAmount) + ", '" +
+                                      myCE.transactionRemarks + "','" + myCE.userName + "','CR-M-',0, " +
+                                      //"'CR-M-' +  CAST((Select ISNULL(Max(TransactionNo),0)+1 From CashCollections_Table Where YEAR(convert(varchar,TransactionDate,23))='" + String.Format("{0:yyyy}", todayDate.Date) + "') AS varchar), '" + 
+                                      "'CR-M-' +  CAST((Select ISNULL(Max(TransactionNo),0)+1 From CashCollections_Table) AS varchar), '" +
+                                      myCE.againstInvoiceNumber + "')";
+
                     cmd.ExecuteNonQuery();
                     con.Close();
                 }

@@ -11,6 +11,8 @@ namespace Wings21D.Models
         public string customerName { get; set; }
         public double collectionAmount { get; set; }
         public string chequeNumber { get; set; }
+
+        public string chequeDate { get; set; }
         public string againstInvoiceNumber { get; set; }
         public string transactionRemarks { get; set; }
         public string userName { get; set; }

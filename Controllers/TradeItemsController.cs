@@ -28,7 +28,16 @@ namespace Wings21D.Controllers
                 try
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("select * from Trade_Items_Table Order By ItemName", con);
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandText = "Select a.ItemName, a.ProductName, a.HSNSAC,  a.ProfitCenterName, a.GSTRate," +
+                                      "Sum(a.RatePerPiece)RatePerPiece, Sum(a.RatePerPack)RatePerPack, Sum(a.ItemMRP) ItemMRP, " +
+                                      "ISNULL(Sum(b.AvailableQtyInPieces),0) BalanceQty " +
+                                      "From Trade_Items_Table a " +
+                                      "Left Join Trade_ItemBalance_Table b On a.ItemName=b.ItemName " +
+                                      "Group by a.ItemName, a.ProductName, a.ProfitCenterName, a.HSNSAC, a.GSTRate, b.ItemName " +
+                                      "Order by a.ItemName";
+
                     da.SelectCommand = cmd;
                     Items.TableName = "Items";
                     da.Fill(Items);

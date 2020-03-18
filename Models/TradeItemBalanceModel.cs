@@ -9,6 +9,6 @@ namespace Wings21D.Models
     {
         public string itemName { get; set; }
         public string locationName { get; set; }
-        public int balanceQuantityInPieces { get; set; }
+        public double availableQtyInPieces { get; set; }
     }
 }

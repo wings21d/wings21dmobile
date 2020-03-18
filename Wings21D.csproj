@@ -167,7 +167,11 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\ChequeCollectionsController.cs" />
     <Compile Include="Controllers\CashCollectionsController.cs" />
-    <Compile Include="Controllers\UpdateCollectionsFlagController.cs" />
+    <Compile Include="Controllers\TradeBeatDuesController.cs" />
+    <Compile Include="Controllers\TradeDeleteCustomerBalanceController.cs" />
+    <Compile Include="Controllers\TradeDeleteItemBalanceController.cs" />
+    <Compile Include="Controllers\TradeSalesOrderController.cs" />
+    <Compile Include="Controllers\UpdateTransactionFlagController.cs" />
     <Compile Include="Controllers\TradeCollectionsController.cs" />
     <Compile Include="Controllers\CreateDatabaseController.cs" />
     <Compile Include="Controllers\BankAccountsController.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="Controllers\TradeLocationsController.cs" />
     <Compile Include="Controllers\TradeCustomersController.cs" />
     <Compile Include="Controllers\TradeItemsController.cs" />
+    <Compile Include="Controllers\CheckDatabaseController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\TradeProfitCentersController.cs" />
     <Compile Include="Controllers\TradeBeatsController.cs" />
@@ -187,10 +192,11 @@
     </Compile>
     <Compile Include="Models\ChequeCollectionsEntryModel.cs" />
     <Compile Include="Models\CashCollectionsEntryModel.cs" />
-    <Compile Include="Models\CollectionDocumentNumbersModel.cs" />
+    <Compile Include="Models\DocumentNumbersModel.cs" />
+    <Compile Include="Models\TradeSalesOrderEntryModel.cs" />
     <Compile Include="Models\TradeItemBalanceModel.cs" />
     <Compile Include="Models\TradeCustomerBalanceModel.cs" />
-    <Compile Include="Models\TradeCustoemrsModel.cs" />
+    <Compile Include="Models\TradeCustomersModel.cs" />
     <Compile Include="Models\TradeLocationsModel.cs" />
     <Compile Include="Models\UsersModel.cs" />
     <Compile Include="Models\TradeItemsModel.cs" />

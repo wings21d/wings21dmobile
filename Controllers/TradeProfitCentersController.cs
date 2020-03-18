@@ -28,7 +28,7 @@ namespace Wings21D.Controllers
                 try
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("select * from Trade_ProfitCenters_Table Order By BeatName", con);
+                    SqlCommand cmd = new SqlCommand("select * from Trade_ProfitCenters_Table Order By ProfitCenterName", con);
                     da.SelectCommand = cmd;
                     ProfitCenters.TableName = "ProfitCenters";
                     da.Fill(ProfitCenters);

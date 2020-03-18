@@ -73,14 +73,29 @@ namespace Wings21D.Controllers
 
             if (!String.IsNullOrEmpty(dbName))
             {
+                con.Open();
+                SqlDataAdapter itemBalancesAdapter = new SqlDataAdapter();
+                DataTable availableItemBalances = new DataTable();
+                cmd.CommandText = "Select * From Trade_ItemBalance_table";
+                itemBalancesAdapter.SelectCommand = cmd;
+                itemBalancesAdapter.Fill(availableItemBalances);
+                
+                con.Close();
+
                 try
                 {
                     con.Open();
 
-                    foreach (TradeItemBalance tib in itembalance)
+                    if (availableItemBalances.Rows.Count > 0)
                     {
+                        cmd.CommandText = "Delete * from Trade_ItemBalance_Table";
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    foreach (TradeItemBalance tib in itembalance)
+                    {                        
                         cmd.CommandText = "Insert Into Trade_ItemBalance_Table Values('" + tib.itemName + "', '" +
-                                          tib.locationName + "'," + tib.balanceQuantityInPieces + ")";
+                                          tib.locationName + "'," + tib.availableQtyInPieces + ")";
                         cmd.ExecuteNonQuery();
                     }
                     con.Close();

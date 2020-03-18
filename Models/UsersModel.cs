@@ -10,5 +10,7 @@ namespace Wings21D.Models
         public string userName { get; set; }
 
         public string userPassword { get; set; }
+
+        public int userStatus { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Wings21D.Models
 {
-    public class CollectionDocumentNumbers
+    public class DocumentNumbers
     {   
         public string documentNo { get; set; }
     }

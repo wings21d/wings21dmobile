@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Wings21D.Controllers
 {
-    public class TradeCollectionsController : ApiController
+    public class TradeSalesOrderController : ApiController
     {
 
         // GET api/<controller>
@@ -21,7 +21,7 @@ namespace Wings21D.Controllers
             DataSet ds = new DataSet();
             List<string> mn = new List<string>();
             SqlDataAdapter da = new SqlDataAdapter();
-            DataTable Collections = new DataTable();
+            DataTable SalesOrders = new DataTable();
 
             if (!String.IsNullOrEmpty(dbName))
             {
@@ -33,14 +33,13 @@ namespace Wings21D.Controllers
                     cmd.Connection = con;
                     DateTime asonDate = DateTime.Parse(asAtDate);
 
-                    cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, b.BeatName, " +
-                                      "a.CashAmount, a.ChequeAmount, RTRIM(ISNULL(a.ChequeNumber,'')) As ChequeNumber, Convert(varchar,a.ChequeDate,23)  As ChequeDate, RTRIM(ISNULL(a.AgainstInvoiceNumber,'')) As AgainstInvoiceNumber, " +
-                                      "a.TransactionRemarks, a.Username from Collections_Table a, Trade_Customers_Table b Where " +
+                    cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, b.BeatName, a.ProfitCenteRname, " +
+                                      "a.ItemName, a.QuantityInPieces, a.QuantityInPacks, a.TransactionRemarks, a.Username from Trade_SalesOrder_Table a, Trade_Customers_Table b Where " +
                                       "a.CustomerName=b.CustomerName and a.TransactionDate <= '" + asonDate.ToString() +
                                       "' And a.DownloadedFlag=0 Order By a.DocumentNo";
                     da.SelectCommand = cmd;
-                    Collections.TableName = "Collections";
-                    da.Fill(Collections);
+                    SalesOrders.TableName = "SalesOrders";
+                    da.Fill(SalesOrders);
                     con.Close();
                 }
                 catch (Exception ex)
@@ -50,7 +49,7 @@ namespace Wings21D.Controllers
 
                 var returnResponseObject = new
                 {
-                    Collections = Collections
+                    SalesOrders = SalesOrders
                 };
 
                 var response = Request.CreateResponse(HttpStatusCode.OK, returnResponseObject, MediaTypeHeaderValue.Parse("application/json"));
@@ -71,7 +70,7 @@ namespace Wings21D.Controllers
 
         // POST api/<controller>                
         [HttpPost]
-        public HttpResponseMessage SaveCollection(CollectionsEntry myCE)
+        public HttpResponseMessage SaveOrder(List<SalesOrderEntry> mySO)
         {
             var re = Request;
             var headers = re.Headers;
@@ -95,18 +94,23 @@ namespace Wings21D.Controllers
                 {
                     con.Open();
 
-                    cmd.CommandText = "Insert Into Collections_Table Values(" +
-                                      //"(Select ISNULL(Max(TransactionNo),0)+1 From Collections_Table Where YEAR(convert(varchar,TransactionDate,23))='" + String.Format("{0:yyyy}", todayDate.Date) + "')," +
-                                      "(Select ISNULL(Max(TransactionNo),0)+1 From Collections_Table), " +
-                                      "'" + String.Format("{0:yyyy-MM-dd}",todayDate.Date) +"',null, '" + myCE.customerName + "', "
-                                      + Convert.ToDouble(myCE.cashAmount) +
-                                      ", '" + myCE.chequeNumber + "', " +
-                                      "'" + String.Format("{0:yyyy-MM-dd}", myCE.chequeDate) + "','" +  myCE.againstInvoiceNumber +  "','" + myCE.transactionRemarks + "','" + myCE.userName + "','CB-M-',0, " +
-                                      //"'CB-M-' +  CAST((Select ISNULL(Max(TransactionNo),0)+1 From Collections_Table Where YEAR(convert(varchar,TransactionDate,23))='" + String.Format("{0:yyyy}", todayDate.Date) + "') AS varchar), " +
-                                      "'CB-M-' +  CAST((Select ISNULL(Max(TransactionNo),0)+1 From Collections_Table) AS varchar), " +
-                                      myCE.chequeAmount + ")";
+                    //cmd.CommandText = "Select ISNULL(Max(TransactionNo), 0) + 1 From Trade_SalesOrder_Table Where YEAR(convert(varchar,TransactionDate,23)) = '" + String.Format("{0:yyyy-MM-dd}", todayDate.Date) + "'";
+                    cmd.CommandText = "Select ISNULL(Max(TransactionNo), 0) + 1 From Trade_SalesOrder_Table";
+                    SqlDataAdapter docNumberAdapter = new SqlDataAdapter();
+                    DataTable newDocumentNumber = new DataTable();
+                    docNumberAdapter.SelectCommand = cmd;
+                    docNumberAdapter.Fill(newDocumentNumber);
 
-                    cmd.ExecuteNonQuery();
+                    foreach (SalesOrderEntry soe in mySO)
+                    {
+                        cmd.CommandText = "Insert Into Trade_SalesOrder_Table Values(" + Convert.ToInt32(newDocumentNumber.Rows[0][0]) +
+                                          ",'" + String.Format("{0:yyyy-MM-dd}", todayDate.Date) + "','" + soe.customerName + "', '" + soe.itemName + "'," +
+                                          soe.quantityInPieces + "," + soe.quantityInPacks + ",'" + soe.transactionRemarks + "','GSO-M-'," +
+                                          "'GSO-M-" + Convert.ToInt32(newDocumentNumber.Rows[0][0]).ToString() +  "',0,'" + soe.userName + "','" +
+                                          soe.profitCenterName + "')";
+
+                        cmd.ExecuteNonQuery();
+                    }
                     con.Close();
                 }
                 catch (Exception ex)
