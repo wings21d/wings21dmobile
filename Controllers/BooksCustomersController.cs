@@ -12,12 +12,12 @@ using System.Web.Script.Serialization;
 
 namespace Wings21D.Controllers
 {
-    public class TradeCustomersController : ApiController
+    public class BooksCustomersController : ApiController
     {
 
         // GET api/values
         //public IEnumerable<string> Get()
-        public HttpResponseMessage Get(string dbName, string beatName)
+        public HttpResponseMessage Get(string dbName)
         {   
             if (!String.IsNullOrEmpty(dbName))
             {
@@ -33,23 +33,23 @@ namespace Wings21D.Controllers
                     cmd.Connection = con;
                     con.Open();
 
-                    if (!String.IsNullOrEmpty(beatName))
+                    /*if (!String.IsNullOrEmpty(beatName))
                     {
                         cmd.CommandText = "Select DISTINCT a.CustomerName, a.BeatName, ISNULL(a.CustomerCity,'Not Set') CustomerCity, " +
                                           "ISNULL(a.GSTNumber,'Not Set') GSTNumber, ISNULL(Sum(b.PendingValue),0) TotalDue " +
-                                          "From Trade_Customers_Table a LEFT Join Trade_CustomerPendingBills_Table b " +
+                                          "From Books_Customers_Table a LEFT Join Books_CustomerPendingBills_Table b " +
                                           "On a.CustomerName = b.CustomerName Where a.BeatName='" + beatName.Trim() + "'" +
                                           "Group by a. CustomerName, b.CustomerName, a.BeatName, a.GSTNumber, a.CustomerCity " +
                                           "Order by a.CustomerName, a.BeatName";
                     }
-                    else
+                    else*/
                     {
-                        cmd.CommandText = "Select DISTINCT a.CustomerName, a.BeatName, ISNULL(a.CustomerCity,'Not Set') CustomerCity, " +
+                        cmd.CommandText = "Select DISTINCT a.CustomerName, ISNULL(a.CustomerCity,'Not Set') CustomerCity, " +
                                           "ISNULL(a.GSTNumber,'Not Set') GSTNumber, ISNULL(Sum(b.PendingValue),0) TotalDue " +
-                                          "From Trade_Customers_Table a LEFT Join Trade_CustomerPendingBills_Table b " +
+                                          "From Books_Customers_Table a LEFT Join Books_CustomerPendingBills_Table b " +
                                           "On a.CustomerName = b.CustomerName "  +
-                                          "Group by a. CustomerName, b.CustomerName, a.BeatName, a.GSTNumber, a.CustomerCity " +
-                                          "Order by a.CustomerName, a.BeatName";
+                                          "Group by a. CustomerName, b.CustomerName, a.GSTNumber, a.CustomerCity " +
+                                          "Order by a.CustomerName";
                     }
                     da.SelectCommand = cmd;
                     Customers.TableName = "Customers";
@@ -81,7 +81,7 @@ namespace Wings21D.Controllers
 
         // POST api/values
         //public HttpResponseMessage Post([FromBody]string jsonData)
-        public HttpResponseMessage Post(List<TradeCustomers> customers)
+        public HttpResponseMessage Post(List<BooksCustomers> customers)
         {
             var re = Request;
             var headers = re.Headers;
@@ -90,7 +90,7 @@ namespace Wings21D.Controllers
             //byte[] byteArray = Convert.FromBase64String(jsonData);
             //string customersInfo = System.Text.Encoding.UTF8.GetString(byteArray);
 
-            //List<TradeCustomers> customers = new JavaScriptSerializer().Deserialize<List<TradeCustomers>>(customersInfo);
+            //List<BooksCustomers> customers = new JavaScriptSerializer().Deserialize<List<BooksCustomers>>(customersInfo);
             
             if (headers.Contains("dbname"))
             {
@@ -106,10 +106,9 @@ namespace Wings21D.Controllers
                 try
                 {
                     con.Open();
-                    foreach (TradeCustomers cust in customers)
+                    foreach (BooksCustomers cust in customers)
                     {
-                        cmd.CommandText = "Insert Into Trade_Customers_Table Values('" + cust.customerName + "', '" +
-                        cust.beatName + "','" + cust.gstNumber + "','" + cust.customerCity +
+                        cmd.CommandText = "Insert Into Books_Customers_Table Values('" + cust.customerName + "','" + cust.gstNumber + "','" + cust.customerCity +
                         "'," + cust.activeStatus + ")";
                         cmd.ExecuteNonQuery();
                     }
@@ -126,8 +125,6 @@ namespace Wings21D.Controllers
             {
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             }
-
         }
-
     }
 }

@@ -35,7 +35,7 @@ namespace Wings21D.Controllers
 
                     cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, b.BeatName, a.ProfitCenteRname, " +
                                       "a.ItemName, a.QuantityInPieces, a.QuantityInPacks, a.TransactionRemarks, a.Username from Trade_SalesOrder_Table a, Trade_Customers_Table b Where " +
-                                      "a.CustomerName=b.CustomerName and a.TransactionDate <= '" + asonDate.ToString() +
+                                      "a.CustomerName=b.CustomerName and convert(varchar,a.TransactionDate,23) <= '" + asonDate.ToString() +
                                       "' And a.DownloadedFlag=0 Order By a.DocumentNo";
                     da.SelectCommand = cmd;
                     SalesOrders.TableName = "SalesOrders";
@@ -105,8 +105,8 @@ namespace Wings21D.Controllers
                     {
                         cmd.CommandText = "Insert Into Trade_SalesOrder_Table Values(" + Convert.ToInt32(newDocumentNumber.Rows[0][0]) +
                                           ",'" + String.Format("{0:yyyy-MM-dd}", todayDate.Date) + "','" + soe.customerName + "', '" + soe.itemName + "'," +
-                                          soe.quantityInPieces + "," + soe.quantityInPacks + ",'" + soe.transactionRemarks + "','GSO-M-'," +
-                                          "'GSO-M-" + Convert.ToInt32(newDocumentNumber.Rows[0][0]).ToString() +  "',0,'" + soe.userName + "','" +
+                                          soe.quantityInPieces + "," + soe.quantityInPacks + ",'" + soe.transactionRemarks + "','OR-M-'," +
+                                          "'OR-M-" + Convert.ToInt32(newDocumentNumber.Rows[0][0]).ToString() +  "',0,'" + soe.userName + "','" +
                                           soe.profitCenterName + "')";
 
                         cmd.ExecuteNonQuery();

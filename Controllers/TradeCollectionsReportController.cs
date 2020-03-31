@@ -7,31 +7,41 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using Wings21D.Models;
+using System.Linq;
 
 namespace Wings21D.Controllers
 {
-    public class BankAccountsController : ApiController
+    public class TradeCollectionsReportController : ApiController
     {
-        // GET api/values
-        //public IEnumerable<string> Get()
-        public HttpResponseMessage Get(string dbName)
+
+        // GET api/<controller>
+        public HttpResponseMessage Get(string dbName, string userName)
         {
             SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + dbName + @";Data Source=localhost\SQLEXPRESS");
             DataSet ds = new DataSet();
-            
             List<string> mn = new List<string>();
             SqlDataAdapter da = new SqlDataAdapter();
-            DataTable Banks = new DataTable();
+            DataTable CBCollections = new DataTable();
 
             if (!String.IsNullOrEmpty(dbName))
             {
                 try
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("select * from BankAccounts_Table Order By BankAccount", con);
+
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    //DateTime asonDate = DateTime.Parse(asAtDate);
+
+                    cmd.CommandText = "select DocumentNo, Format(TransactionDate,'dd-MMM-yyyy') As 'CollectionDate' From Collections_Table " +
+                                      //"Where Convert(varchar,a.TransactionDate,23) <= '" + asonDate.ToString() + "' " +
+                                      "Where Username='" + userName + "' " +
+                                      "Group by DocumentNo, TransactionDate " +
+                                      "Order By CollectionDate Desc, DocumentNo";
+
                     da.SelectCommand = cmd;
-                    Banks.TableName = "Banks";
-                    da.Fill(Banks);
+                    CBCollections.TableName = "CBCollections";
+                    da.Fill(CBCollections);
                     con.Close();
                 }
                 catch (Exception ex)
@@ -41,7 +51,7 @@ namespace Wings21D.Controllers
 
                 var returnResponseObject = new
                 {
-                    Banks = Banks
+                    CBCollections = CBCollections
                 };
 
                 var response = Request.CreateResponse(HttpStatusCode.OK, returnResponseObject, MediaTypeHeaderValue.Parse("application/json"));
@@ -50,15 +60,8 @@ namespace Wings21D.Controllers
             else
             {
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
+                
             }
         }
-
-        // GET api/values/5
-
-        // POST api/values
-        public void Post([FromBody]string value)
-        {
-        }
-
     }
 }

@@ -51,9 +51,24 @@ namespace Wings21D.Controllers
             SqlConnection con = new SqlConnection(@"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + dbName + @";Data Source=localhost\SQLEXPRESS");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = con;
-
+            
             if (!String.IsNullOrEmpty(dbName))
             {
+
+                cmd.CommandText = "Select count(*) from CompanyUsers_Table";
+                SqlDataAdapter usersList = new SqlDataAdapter();
+                DataTable fetchedUsers = new DataTable();
+                usersList.SelectCommand = cmd;
+                usersList.Fill(fetchedUsers);
+
+                if(Convert.ToInt32(fetchedUsers.Rows[0][0].ToString()) > 0)
+                {
+                    con.Open();
+                    cmd.CommandText = "Delete from CompanyUsers_Table";
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+
                 try
                 {
                     con.Open();
