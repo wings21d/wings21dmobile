@@ -95,7 +95,7 @@ namespace Wings21D.Controllers
                     foreach (BooksProductBalance bpb in productbalance)
                     {                        
                         cmd.CommandText = "Insert Into Books_ProductBalance_Table Values('" + bpb.productName + "', '" +
-                                          bpb.locationName + "'," + bpb.availableQtyInPieces + ")";
+                                          bpb.locationName + "'," + bpb.availableQty + ")";
                         cmd.ExecuteNonQuery();
                     }
                     con.Close();

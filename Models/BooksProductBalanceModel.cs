@@ -9,6 +9,6 @@ namespace Wings21D.Models
     {
         public string productName { get; set; }
         public string locationName { get; set; }
-        public double availableQtyInPieces { get; set; }
+        public double availableQty { get; set; }
     }
 }

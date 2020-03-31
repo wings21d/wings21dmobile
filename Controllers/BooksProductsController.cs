@@ -31,8 +31,8 @@ namespace Wings21D.Controllers
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = con;
                     cmd.CommandText = "Select a.ProductName, a.HSNSAC, a.GSTRate," +
-                                      "Sum(a.SalesPriceListRate)SalesPriceListRate, Sum(a.ProductMRP) ProductMRP, " +
-                                      "ISNULL(Sum(b.AvailableQtyInPieces),0) BalanceQty " +
+                                      "Sum(a.SalesPriceListRate)SalesPrice, Sum(a.ProductMRP) ProductMRP, " +
+                                      "ISNULL(Sum(b.AvailableQty),0) BalanceQty " +
                                       "From Books_Products_Table a " +
                                       "Left Join Books_ProductBalance_Table b On a.ProductName=b.ProductName " +
                                       "Group by a.ProductName, a.HSNSAC, a.GSTRate, b.ProductName " +
@@ -106,7 +106,7 @@ namespace Wings21D.Controllers
                     foreach (BooksProducts tproducts in ti)
                     {
                         cmd.CommandText = "Insert Into Books_Products_Table Values(NEWID(), '" +
-                        tproducts.productName + "','" + tproducts.hsnsac + "'," + tproducts.salespricelistrate + ",'" + tproducts.gstrate + "'," + tproducts.productmrp + "," + tproducts.activeStatus + ")";
+                        tproducts.productName + "','" + tproducts.hsnsac + "'," + tproducts.salesprice + ",'" + tproducts.gstrate + "'," + tproducts.productmrp + "," + tproducts.activeStatus + ")";
                         cmd.ExecuteNonQuery();
                     }
                     con.Close();
