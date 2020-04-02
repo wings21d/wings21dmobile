@@ -28,7 +28,7 @@ namespace Wings21D.Controllers
                 try
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand("select * from Books_CustomerBalance_Table Order By CustomerName", con);
+                    SqlCommand cmd = new SqlCommand("select * from Books_CustomersPendingBills_Table Order By CustomerName", con);
                     da.SelectCommand = cmd;
                     CustomerBalance.TableName = "CustomerBalance";
                     da.Fill(CustomerBalance);
@@ -75,7 +75,7 @@ namespace Wings21D.Controllers
             if (!String.IsNullOrEmpty(dbName))
             {
                 con.Open();
-                cmd.CommandText = "Select * From Books_CustomerPendingBills_Table";
+                cmd.CommandText = "Select * From Books_CustomersPendingBills_Table";
                 SqlDataAdapter customerBalancesAdapter = new SqlDataAdapter();
                 DataTable availableCustoemrBalances = new DataTable();
                 customerBalancesAdapter.SelectCommand = cmd;
@@ -89,13 +89,13 @@ namespace Wings21D.Controllers
 
                     if(availableCustoemrBalances.Rows.Count > 0)
                     {
-                        cmd.CommandText = "Delete * from Books_CustomerPendingBills_Table";
+                        cmd.CommandText = "Delete * from Books_CustomersPendingBills_Table";
                         cmd.ExecuteNonQuery();
                     }
 
                     foreach (BooksCustomerBalance bcb in customerBalance)
                     {   
-                        cmd.CommandText = "Insert Into Books_CustomerPendingBills_Table Values('" + bcb.customerName + "', '"
+                        cmd.CommandText = "Insert Into Books_CustomersPendingBills_Table Values('" + bcb.customerName + "', '"
                                           + bcb.billNumber + "', '" + bcb.billDate + "', " + bcb.pendingValue + ")";
                         cmd.ExecuteNonQuery();
                     }
