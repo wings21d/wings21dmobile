@@ -32,10 +32,10 @@ namespace Wings21D.Controllers
                     cmd.Connection = con;
                     DateTime asOnDate = DateTime.Parse(asAtDate);
 
-                    cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, b.BeatName, " +
+                    cmd.CommandText = "select a.DocumentNo, Convert(varchar,a.TransactionDate,23) as TransactionDate, a.CustomerName, " +
                                       "a.Amount, RTRIM(ISNULL(a.ChequeNumber,'')) As ChequeNumber, Convert(varchar,a.ChequeDate,23)  As ChequeDate, RTRIM(ISNULL(a.AgainstInvoiceNumber,'')) As AgainstInvoiceNumber, " +
                                       "a.TransactionRemarks, a.Username from ChequeCollections_Table a, Books_Customers_Table b Where " +
-                                      "a.CustomerName=b.CustomerName and a.TransactionDate <= '" + asOnDate.ToString() +
+                                      "a.CustomerName=b.CustomerName and Convert(varchar,a.TransactionDate,23) <= '" + asOnDate.ToString() +
                                       "' And a.DownloadedFlag=0 Order By a.DocumentNo";
 
                     da.SelectCommand = cmd;
