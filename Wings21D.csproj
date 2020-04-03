@@ -171,6 +171,8 @@
     <Compile Include="Controllers\BooksLocationsController.cs" />
     <Compile Include="Controllers\BooksProductBalanceController.cs" />
     <Compile Include="Controllers\BooksProductsController.cs" />
+    <Compile Include="Controllers\BooksCashCollectionsController.cs" />
+    <Compile Include="Controllers\BooksChequeCollectionsController.cs" />
     <Compile Include="Controllers\ChequeCollectionsController.cs" />
     <Compile Include="Controllers\CashCollectionsController.cs" />
     <Compile Include="Controllers\TradeBeatDuesController.cs" />
